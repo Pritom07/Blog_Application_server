@@ -13,7 +13,7 @@ model Posts {
   content    String     @db.Text()
   thumbnail  String?
   isFeatured Boolean?   @default(false)
-  status     postStatus
+  status     postStatus @default(PUBLISHED)
   tags       String[]
   views      Int?       @default(0)
   author_Id  String

@@ -11,7 +11,7 @@ CREATE TABLE "posts" (
     "content" TEXT NOT NULL,
     "thumbnail" TEXT,
     "isFeatured" BOOLEAN DEFAULT false,
-    "status" "postStatus" NOT NULL,
+    "status" "postStatus" NOT NULL DEFAULT 'PUBLISHED',
     "tags" TEXT[],
     "views" INTEGER DEFAULT 0,
     "author_Id" TEXT NOT NULL,
