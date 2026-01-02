@@ -3,15 +3,17 @@ import { postsServices } from "./posts.services";
 
 const createPost = async (req: Request, res: Response) => {
   try {
-    const result = await postsServices.createPost(req.body);
+    const user = req.user;
+    const result = await postsServices.createPost(req.body, user?.id as string);
     res.status(201).json({
       success: true,
-      message: result,
+      message: "Post created succcessfully",
+      data: result,
     });
   } catch (err: any) {
-    res.status(200).json({
+    res.status(500).json({
       success: false,
-      message: err.message,
+      message: `Error Occured : ${err.message}`,
     });
   }
 };
