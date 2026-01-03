@@ -43,11 +43,14 @@ const getAllPosts = async (req: Request, res: Response) => {
 
     const status = req.query.status as postStatus;
 
+    const author_Id = req.query.author_Id as string;
+
     const result = await postsServices.getAllPosts({
       searchVal,
       tags,
       isFeatured,
       status,
+      author_Id,
     });
     res.status(200).json({
       success: true,
