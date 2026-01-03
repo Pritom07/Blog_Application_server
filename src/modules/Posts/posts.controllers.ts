@@ -20,7 +20,9 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const result = await postsServices.getAllPosts();
+    const searchVal = req.query.search as string;
+
+    const result = await postsServices.getAllPosts({ searchVal });
     res.status(200).json({
       success: true,
       message: "Getting posts successfully",
