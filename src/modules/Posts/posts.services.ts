@@ -13,9 +13,11 @@ const createPost = async (
 const getAllPosts = async ({
   searchVal,
   tags,
+  isFeatured,
 }: {
   searchVal: string | undefined;
   tags: Array<string> | [];
+  isFeatured: boolean | undefined;
 }) => {
   const andConditions: PostsWhereInput[] = [];
 
@@ -48,6 +50,12 @@ const getAllPosts = async ({
       tags: {
         hasEvery: tags,
       },
+    });
+  }
+
+  if (typeof isFeatured === "boolean") {
+    andConditions.push({
+      isFeatured,
     });
   }
 

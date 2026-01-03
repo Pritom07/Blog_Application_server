@@ -22,9 +22,29 @@ const getAllPosts = async (req: Request, res: Response) => {
   try {
     const search = req.query.search;
     const searchVal = typeof search === "string" ? search : undefined;
+
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
-    const result = await postsServices.getAllPosts({ searchVal, tags });
+    const isFeaturedQyery = req.query.isFeatured;
+    let isFeatured: boolean | undefined;
+    if (typeof isFeaturedQyery === "string") {
+      if (isFeaturedQyery === "true") {
+        isFeatured = true;
+      } else if (isFeaturedQyery === "false") {
+        isFeatured = false;
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid value for isFeatured",
+        });
+      }
+    }
+
+    const result = await postsServices.getAllPosts({
+      searchVal,
+      tags,
+      isFeatured,
+    });
     res.status(200).json({
       success: true,
       message: "Getting posts successfully",
