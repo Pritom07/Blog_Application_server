@@ -15,7 +15,7 @@ app.use(
   })
 );
 
-app.use("/post", postsRoutes);
+app.use("/posts", postsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Prisma Blog_Application");

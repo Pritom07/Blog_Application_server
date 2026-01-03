@@ -9,6 +9,7 @@ declare global {
         name: string;
         email: string;
         role: string;
+        emailVarified: boolean;
       };
     }
   }
@@ -19,41 +20,46 @@ export enum userRole {
   USER = "USER",
 }
 
-const auth = (...userRole: string[]) => {
+const auth = (...role: userRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const session = await betterAuth.api.getSession({
-      headers: req.headers as any,
-    });
-
-    if (!session) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized access",
+    try {
+      const session = await betterAuth.api.getSession({
+        headers: req.headers as any,
       });
-    }
 
-    if (!session.user.emailVerified) {
+      if (!session) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized access",
+        });
+      }
+
+      if (!session.user.emailVerified) {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden! Please verify your email.",
+        });
+      }
+
+      req.user = {
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        role: session.user.role as string,
+        emailVarified: session.user.emailVerified,
+      };
+
+      if (role.length && role.includes(req.user.role as userRole)) {
+        return next();
+      }
+
       return res.status(403).json({
         success: false,
-        message: "Forbidden",
+        message: "You are not allowed to perform this action",
       });
+    } catch (err) {
+      next(err);
     }
-
-    req.user = {
-      id: session.session.id,
-      name: session.user.name,
-      email: session.user.email,
-      role: session.user.role as string,
-    };
-
-    if (userRole.length && userRole.includes(req.user.role)) {
-      return next();
-    }
-
-    return res.status(403).json({
-      success: false,
-      message: "You are not allowed to perform this action",
-    });
   };
 };
 

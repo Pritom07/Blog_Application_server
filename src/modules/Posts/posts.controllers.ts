@@ -18,4 +18,20 @@ const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const postsControllers = { createPost };
+const getAllPosts = async (req: Request, res: Response) => {
+  try {
+    const result = await postsServices.getAllPosts();
+    res.status(200).json({
+      success: true,
+      message: "Getting posts successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: `Error Occured : ${err.message}`,
+    });
+  }
+};
+
+export const postsControllers = { createPost, getAllPosts };
