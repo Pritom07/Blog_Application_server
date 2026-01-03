@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { postsServices } from "./posts.services";
+import { postStatus } from "../../../generated/prisma/enums";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -40,10 +41,13 @@ const getAllPosts = async (req: Request, res: Response) => {
       }
     }
 
+    const status = req.query.status as postStatus;
+
     const result = await postsServices.getAllPosts({
       searchVal,
       tags,
       isFeatured,
+      status,
     });
     res.status(200).json({
       success: true,
