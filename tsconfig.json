@@ -12,7 +12,7 @@
     "target": "ES2023",
     "types": [],
     "esModuleInterop": true,
-    "ignoreDeprecations": "6.0",
+    // "ignoreDeprecations": "6.0",
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

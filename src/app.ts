@@ -3,6 +3,7 @@ import { postsRoutes } from "./modules/Posts/posts.routes";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "cors";
+import { config } from "./config";
 
 const app = express();
 
@@ -10,7 +11,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.APP_URL,
+    origin: config.APP_URL,
     credentials: true,
   })
 );
