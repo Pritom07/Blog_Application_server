@@ -4,6 +4,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "cors";
 import { config } from "./config";
+import { commentRoutes } from "./modules/Comments/comments.routes";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(
 );
 
 app.use("/posts", postsRoutes);
+app.use("/comments", commentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Prisma Blog_Application");

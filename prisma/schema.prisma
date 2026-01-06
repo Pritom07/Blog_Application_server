@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -29,7 +28,7 @@ model Posts {
 model Comments {
   id        String       @id @default(uuid())
   content   String
-  status    commentSatus
+  status    commentSatus @default(APPROVED)
   author_Id String
 
   post    Posts  @relation(fields: [post_Id], references: [id])
@@ -37,7 +36,7 @@ model Comments {
 
   parent    Comments?  @relation("CommentReplies", fields: [parent_Id], references: [id])
   parent_Id String?
-  comments  Comments[] @relation("CommentReplies")
+  replies   Comments[] @relation("CommentReplies")
 
   created_At DateTime @default(now())
   updated_At DateTime @updatedAt
