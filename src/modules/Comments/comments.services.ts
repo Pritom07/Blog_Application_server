@@ -12,4 +12,13 @@ const createComment = async (payLoad: {
   return result;
 };
 
-export const commentServices = { createComment };
+const getAllComments = async () => {
+  const result = await prisma.comments.findMany({
+    orderBy: {
+      created_At: "asc",
+    },
+  });
+  return result;
+};
+
+export const commentServices = { createComment, getAllComments };

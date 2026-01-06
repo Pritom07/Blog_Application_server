@@ -19,4 +19,20 @@ const createComment = async (req: Request, res: Response) => {
   }
 };
 
-export const commentControllers = { createComment };
+const getAllComments = async (req: Request, res: Response) => {
+  try {
+    const result = await commentServices.getAllComments();
+    res.status(200).json({
+      success: true,
+      message: "Getting all comments successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: `Error Occured : ${err.message}`,
+    });
+  }
+};
+
+export const commentControllers = { createComment, getAllComments };
