@@ -1,3 +1,4 @@
+import { commentSatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createComment = async (payLoad: {
@@ -72,10 +73,24 @@ const deleteComment = async (id: string) => {
   return result;
 };
 
+const updateComment = async (
+  id: string,
+  payLoad: { content?: string; status?: commentSatus }
+) => {
+  const result = await prisma.comments.update({
+    where: {
+      id,
+    },
+    data: payLoad,
+  });
+  return result;
+};
+
 export const commentServices = {
   createComment,
   getAllComments,
   getCommentById,
   getCommentByAuthorId,
   deleteComment,
+  updateComment,
 };
