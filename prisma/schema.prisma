@@ -31,10 +31,10 @@ model Comments {
   status    commentSatus @default(APPROVED)
   author_Id String
 
-  post    Posts  @relation(fields: [post_Id], references: [id])
+  post    Posts  @relation(fields: [post_Id], references: [id], onDelete: Cascade)
   post_Id String
 
-  parent    Comments?  @relation("CommentReplies", fields: [parent_Id], references: [id])
+  parent    Comments?  @relation("CommentReplies", fields: [parent_Id], references: [id], onDelete: Cascade)
   parent_Id String?
   replies   Comments[] @relation("CommentReplies")
 
