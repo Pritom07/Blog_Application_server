@@ -35,4 +35,26 @@ const getAllComments = async (req: Request, res: Response) => {
   }
 };
 
-export const commentControllers = { createComment, getAllComments };
+const getCommentById = async (req: Request, res: Response) => {
+  try {
+    const result = await commentServices.getCommentById(
+      req.params.id as string
+    );
+    res.status(200).json({
+      success: true,
+      message: "Getting comment successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: `Error Occured : ${err.message}`,
+    });
+  }
+};
+
+export const commentControllers = {
+  createComment,
+  getAllComments,
+  getCommentById,
+};
