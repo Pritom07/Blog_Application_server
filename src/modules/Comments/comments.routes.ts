@@ -21,7 +21,7 @@ router.patch(
   auth(userRole.ADMIN, userRole.USER),
   commentControllers.updateComment
 );
-// changing required
+
 router.delete(
   "/:id",
   auth(userRole.ADMIN, userRole.USER),

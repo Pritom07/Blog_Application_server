@@ -74,7 +74,14 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
 
 const deleteComment = async (req: Request, res: Response) => {
   try {
-    const result = await commentServices.deleteComment(req.params.id as string);
+    const user=req.user;
+
+    if(!user){
+      throw new Error("User not found")
+    }
+
+    const isAdmin:boolean=user.role===userRole.ADMIN;
+    const result = await commentServices.deleteComment(req.params.id as string, user.id, isAdmin);
     res.status(200).json({
       success: true,
       message: "Comment Deleted Successfully",

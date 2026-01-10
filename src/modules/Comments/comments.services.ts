@@ -64,7 +64,25 @@ const getCommentByAuthorId = async (author_Id: string) => {
   return result;
 };
 
-const deleteComment = async (id: string) => {
+const deleteComment = async (
+  id: string,
+  author_Id: string,
+  isAdmin: boolean
+) => {
+  const isExist = await prisma.comments.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      author_Id: true,
+    },
+  });
+
+  if (!isAdmin && author_Id !== isExist.author_Id) {
+    throw new Error("You are not allowed to perform this action");
+  }
+
   const result = await prisma.comments.delete({
     where: {
       id,
@@ -86,17 +104,41 @@ const updateComment = async (
     select: {
       id: true,
       author_Id: true,
+      status: true,
     },
   });
 
-  if (!isAdmin && author_Id !== isExist.author_Id) {
-    throw new Error("You are not allowed to perform this action");
+  const updateData = { ...payLoad };
+
+  if (!isAdmin) {
+    if (author_Id !== isExist.author_Id) {
+      throw new Error("You are not allowed to perform this action");
+    }
+
+    if (updateData.status && updateData.status === isExist.status) {
+      delete updateData.status;
+
+      if (Object.keys(updateData).length === 0) {
+        throw new Error(`status : ${isExist.status} already exists.`);
+      }
+    }
   }
 
   if (isAdmin) {
-    delete payLoad.content;
-    if (Object.keys(payLoad).length === 0) {
-      throw new Error("No valid fields provided for update.You can only update the post status.");
+    delete updateData.content;
+
+    if (updateData.status && updateData?.status === isExist.status) {
+      delete updateData.status;
+
+      if (Object.keys(updateData).length === 0) {
+        throw new Error(`status : ${isExist.status} already exists.`);
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      throw new Error(
+        "No valid fields provided for update.You can only update the post status."
+      );
     }
   }
 
@@ -104,7 +146,7 @@ const updateComment = async (
     where: {
       id,
     },
-    data: payLoad,
+    data: updateData,
   });
   return result;
 };
