@@ -276,9 +276,57 @@ const getMyPost = async (
   return { result, postCount: postCount._count.id };
 };
 
+const updatePost = async (
+  id: string,
+  payLoad: Partial<Posts>,
+  author_Id: string,
+  isAdmin: boolean
+) => {
+  const isExist = await prisma.posts.findUniqueOrThrow({
+    where: {
+      id,
+    },
+
+    select: {
+      author_Id: true,
+    },
+  });
+
+  const omittedArray: Array<string> = [
+    "id",
+    "views",
+    "author_Id",
+    "created_At",
+    "updated_At",
+  ];
+  omittedArray.forEach((omittedField) => {
+    delete (payLoad as Record<string, any>)[omittedField];
+  });
+
+  if (!isAdmin) {
+    if (author_Id !== isExist.author_Id) {
+      throw new Error("You are not allowed to perform this action");
+    }
+
+    if (payLoad?.isFeatured) {
+      delete payLoad.isFeatured;
+    }
+  }
+
+  const result = await prisma.posts.update({
+    where: {
+      id,
+    },
+
+    data: payLoad,
+  });
+  return result;
+};
+
 export const postsServices = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPost,
+  updatePost,
 };

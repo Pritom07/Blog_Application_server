@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postsServices } from "./posts.services";
 import { postStatus } from "../../../generated/prisma/enums";
 import pagination_sorting_Helper from "../../helpers/pagination&sortingHelper";
+import { userRole } from "../../middleware/auth";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -128,9 +129,38 @@ const getMyPost = async (req: Request, res: Response) => {
   }
 };
 
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isAdmin: boolean = user.role === userRole.ADMIN;
+    const result = await postsServices.updatePost(
+      req.params.id as string,
+      req.body,
+      user.id,
+      isAdmin
+    );
+    res.status(200).json({
+      success: true,
+      message: "Post updated successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: `Error Occured : ${err.message}`,
+    });
+  }
+};
+
 export const postsControllers = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPost,
+  updatePost,
 };
