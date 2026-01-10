@@ -10,6 +10,7 @@ declare global {
         email: string;
         role: string;
         emailVarified: boolean;
+        status: string;
       };
     }
   }
@@ -47,6 +48,7 @@ const auth = (...role: userRole[]) => {
         email: session.user.email,
         role: session.user.role as string,
         emailVarified: session.user.emailVerified,
+        status: session.user.status as string,
       };
 
       if (role.length && role.includes(req.user.role as userRole)) {

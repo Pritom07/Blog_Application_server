@@ -156,6 +156,16 @@ const getAllPosts = async ({
 
 const getPostById = async (id: string) => {
   const result = await prisma.$transaction(async (tx) => {
+    const post = await tx.posts.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!post) {
+      throw new Error("POST_NOT_FOUND");
+    }
+
     await tx.posts.update({
       where: {
         id,
@@ -221,4 +231,54 @@ const getPostById = async (id: string) => {
   return result;
 };
 
-export const postsServices = { createPost, getAllPosts, getPostById };
+const getMyPost = async (
+  author_Id: string,
+  sortby: string,
+  sortorder: string
+) => {
+  const post = await prisma.posts.findFirst({
+    where: {
+      author_Id,
+    },
+  });
+
+  if (!post) {
+    throw new Error("POST_NOT_FOUND");
+  }
+
+  const result = await prisma.posts.findMany({
+    where: {
+      author_Id,
+    },
+
+    orderBy: {
+      [sortby]: sortorder,
+    },
+
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
+
+  const postCount = await prisma.posts.aggregate({
+    where: {
+      author_Id,
+    },
+
+    _count: {
+      id: true,
+    },
+  });
+  return { result, postCount: postCount._count.id };
+};
+
+export const postsServices = {
+  createPost,
+  getAllPosts,
+  getPostById,
+  getMyPost,
+};
