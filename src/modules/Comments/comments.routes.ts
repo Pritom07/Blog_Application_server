@@ -5,22 +5,27 @@ import { commentControllers } from "./comments.controllers";
 const router = Router();
 
 router.get("/", commentControllers.getAllComments);
+
 router.get("/:id", commentControllers.getCommentById);
+
 router.get("/author/:id", commentControllers.getCommentByAuthorId);
+
 router.post(
   "/",
   auth(userRole.ADMIN, userRole.USER),
   commentControllers.createComment
 );
-router.delete(
-  "/:id",
-  auth(userRole.ADMIN, userRole.USER),
-  commentControllers.deleteComment
-);
+
 router.patch(
   "/:id",
   auth(userRole.ADMIN, userRole.USER),
   commentControllers.updateComment
+);
+// changing required
+router.delete(
+  "/:id",
+  auth(userRole.ADMIN, userRole.USER),
+  commentControllers.deleteComment
 );
 
 export const commentRoutes = router;

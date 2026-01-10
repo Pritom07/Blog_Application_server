@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { postsRoutes } from "./modules/Posts/posts.routes";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
@@ -20,7 +20,7 @@ app.use(
 app.use("/posts", postsRoutes);
 app.use("/comments", commentRoutes);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Prisma Blog_Application");
 });
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { commentServices } from "./comments.services";
+import { userRole } from "../../middleware/auth";
 
 const createComment = async (req: Request, res: Response) => {
   try {
@@ -89,9 +90,18 @@ const deleteComment = async (req: Request, res: Response) => {
 
 const updateComment = async (req: Request, res: Response) => {
   try {
+    const user = req.user;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isAdmin: boolean = user.role === userRole.ADMIN;
     const result = await commentServices.updateComment(
       req.params.id as string,
-      req.body
+      req.body,
+      user?.id,
+      isAdmin
     );
     res.status(200).json({
       success: true,

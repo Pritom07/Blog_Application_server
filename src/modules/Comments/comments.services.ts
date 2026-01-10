@@ -75,8 +75,31 @@ const deleteComment = async (id: string) => {
 
 const updateComment = async (
   id: string,
-  payLoad: { content?: string; status?: commentSatus }
+  payLoad: { content?: string; status?: commentSatus },
+  author_Id: string,
+  isAdmin: boolean
 ) => {
+  const isExist = await prisma.comments.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      author_Id: true,
+    },
+  });
+
+  if (!isAdmin && author_Id !== isExist.author_Id) {
+    throw new Error("You are not allowed to perform this action");
+  }
+
+  if (isAdmin) {
+    delete payLoad.content;
+    if (Object.keys(payLoad).length === 0) {
+      throw new Error("No valid fields provided for update.You can only update the post status.");
+    }
+  }
+
   const result = await prisma.comments.update({
     where: {
       id,
