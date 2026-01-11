@@ -184,6 +184,22 @@ const deletePost = async (req: Request, res: Response) => {
   }
 };
 
+const getStatistics = async (req: Request, res: Response) => {
+  try {
+    const result = await postsServices.getStatistics();
+    res.status(200).json({
+      success: true,
+      message: "Getting statistics successful",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: `Error Occured : ${err.message}`,
+    });
+  }
+};
+
 export const postsControllers = {
   createPost,
   getAllPosts,
@@ -191,4 +207,5 @@ export const postsControllers = {
   getMyPost,
   updatePost,
   deletePost,
+  getStatistics,
 };
