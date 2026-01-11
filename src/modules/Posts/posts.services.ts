@@ -308,9 +308,7 @@ const updatePost = async (
       throw new Error("You are not allowed to perform this action");
     }
 
-    if (payLoad?.isFeatured) {
-      delete payLoad.isFeatured;
-    }
+    delete payLoad.isFeatured;
   }
 
   const result = await prisma.posts.update({
@@ -323,10 +321,35 @@ const updatePost = async (
   return result;
 };
 
+const deletePost = async (id: string, author_Id: string, isAdmin: boolean) => {
+  const isExist = await prisma.posts.findUniqueOrThrow({
+    where: {
+      id,
+    },
+
+    select: {
+      id: true,
+      author_Id: true,
+    },
+  });
+
+  if (!isAdmin && author_Id !== isExist.author_Id) {
+    throw new Error("You are not allowed to perform this action");
+  }
+
+  const result = await prisma.posts.delete({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
 export const postsServices = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPost,
   updatePost,
+  deletePost,
 };

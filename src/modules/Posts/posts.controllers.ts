@@ -157,10 +157,38 @@ const updatePost = async (req: Request, res: Response) => {
   }
 };
 
+const deletePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isAdmin: boolean = user.role === userRole.ADMIN;
+    const result = await postsServices.deletePost(
+      req.params.id as string,
+      user.id,
+      isAdmin
+    );
+    res.status(200).json({
+      success: true,
+      message: "Post delete successfull",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: `Error Occured : ${err.message}`,
+    });
+  }
+};
+
 export const postsControllers = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPost,
   updatePost,
+  deletePost,
 };
