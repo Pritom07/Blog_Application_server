@@ -149,6 +149,10 @@ const getAllPosts = async ({
     },
   });
 
+  if (resultCount === 0) {
+    throw new Error("NO_POST_EXIST_YET");
+  }
+
   const totalPages = Math.ceil(resultCount / limit);
 
   return { result, resultCount, page, limit, totalPages };
@@ -243,7 +247,7 @@ const getMyPost = async (
   });
 
   if (!post) {
-    throw new Error("POST_NOT_FOUND");
+    throw new Error("NO_POST_CREATED_YET");
   }
 
   const result = await prisma.posts.findMany({
@@ -282,7 +286,7 @@ const updatePost = async (
   author_Id: string,
   isAdmin: boolean
 ) => {
-  const isExist = await prisma.posts.findUniqueOrThrow({
+  const isExist = await prisma.posts.findUnique({
     where: {
       id,
     },
@@ -291,6 +295,10 @@ const updatePost = async (
       author_Id: true,
     },
   });
+
+  if (!isExist) {
+    throw new Error("NO_SUCH_POST_EXIST_TO_UPDATE");
+  }
 
   const omittedArray: Array<string> = [
     "id",
@@ -322,7 +330,7 @@ const updatePost = async (
 };
 
 const deletePost = async (id: string, author_Id: string, isAdmin: boolean) => {
-  const isExist = await prisma.posts.findUniqueOrThrow({
+  const isExist = await prisma.posts.findUnique({
     where: {
       id,
     },
@@ -332,6 +340,10 @@ const deletePost = async (id: string, author_Id: string, isAdmin: boolean) => {
       author_Id: true,
     },
   });
+
+  if (!isExist) {
+    throw new Error("NO_SUCH_POST_EXIST_TO_DELETE");
+  }
 
   if (!isAdmin && author_Id !== isExist.author_Id) {
     throw new Error("You are not allowed to perform this action");

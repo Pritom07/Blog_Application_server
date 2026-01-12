@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postsServices } from "./posts.services";
 import { postStatus } from "../../../generated/prisma/enums";
 import pagination_sorting_Helper from "../../helpers/pagination&sortingHelper";
 import { userRole } from "../../middleware/auth";
 
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     const result = await postsServices.createPost(req.body, user?.id as string);
@@ -14,14 +14,11 @@ const createPost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getAllPosts = async (req: Request, res: Response) => {
+const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const search = req.query.search;
     const searchVal = typeof search === "string" ? search : undefined;
@@ -71,14 +68,11 @@ const getAllPosts = async (req: Request, res: Response) => {
       metaData: remaings,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getPostById = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const postId = req.params.id;
 
@@ -93,14 +87,11 @@ const getPostById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getMyPost = async (req: Request, res: Response) => {
+const getMyPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
 
@@ -122,14 +113,11 @@ const getMyPost = async (req: Request, res: Response) => {
       totalPosts: postCount,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
 
@@ -150,14 +138,11 @@ const updatePost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const deletePost = async (req: Request, res: Response) => {
+const deletePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
 
@@ -177,14 +162,15 @@ const deletePost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getStatistics = async (req: Request, res: Response) => {
+const getStatistics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await postsServices.getStatistics();
     res.status(200).json({
@@ -193,10 +179,7 @@ const getStatistics = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 

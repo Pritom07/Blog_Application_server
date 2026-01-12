@@ -1,8 +1,12 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { commentServices } from "./comments.services";
 import { userRole } from "../../middleware/auth";
 
-const createComment = async (req: Request, res: Response) => {
+const createComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const author_Id = req.user?.id;
     req.body["author_Id"] = author_Id;
@@ -13,14 +17,15 @@ const createComment = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getAllComments = async (req: Request, res: Response) => {
+const getAllComments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await commentServices.getAllComments();
     res.status(200).json({
@@ -29,14 +34,15 @@ const getAllComments = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getCommentById = async (req: Request, res: Response) => {
+const getCommentById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await commentServices.getCommentById(
       req.params.id as string
@@ -47,14 +53,15 @@ const getCommentById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const getCommentByAuthorId = async (req: Request, res: Response) => {
+const getCommentByAuthorId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await commentServices.getCommentByAuthorId(
       req.params.id as string
@@ -65,37 +72,43 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const deleteComment = async (req: Request, res: Response) => {
+const deleteComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const user=req.user;
+    const user = req.user;
 
-    if(!user){
-      throw new Error("User not found")
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    const isAdmin:boolean=user.role===userRole.ADMIN;
-    const result = await commentServices.deleteComment(req.params.id as string, user.id, isAdmin);
+    const isAdmin: boolean = user.role === userRole.ADMIN;
+    const result = await commentServices.deleteComment(
+      req.params.id as string,
+      user.id,
+      isAdmin
+    );
     res.status(200).json({
       success: true,
       message: "Comment Deleted Successfully",
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 
-const updateComment = async (req: Request, res: Response) => {
+const updateComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = req.user;
 
@@ -116,10 +129,7 @@ const updateComment = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error Occured : ${err.message}`,
-    });
+    next(err);
   }
 };
 

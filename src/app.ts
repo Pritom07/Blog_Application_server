@@ -5,6 +5,8 @@ import { auth } from "./lib/auth";
 import cors from "cors";
 import { config } from "./config";
 import { commentRoutes } from "./modules/Comments/comments.routes";
+import errorHandler from "./middleware/globalErrorHandler";
+import notFound from "./middleware/notfound";
 
 const app = express();
 
@@ -23,5 +25,8 @@ app.use("/comments", commentRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Prisma Blog_Application");
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
