@@ -10,14 +10,14 @@ import notFound from "./middleware/notfound";
 
 const app = express();
 
-app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express.json());
 app.use(
   cors({
-    origin: config.APP_URL,
+    origin: config.APP_URL as string,
     credentials: true,
-  })
+  }),
 );
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/posts", postsRoutes);
 app.use("/comments", commentRoutes);
