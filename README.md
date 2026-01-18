@@ -258,14 +258,12 @@ Represents user comments on blog posts, including nested replies.
 ### Relationship Summary
 
 - **User**
-
   - Has many **Posts**
   - Has many **Comments**
   - Has many **Sessions**
   - Has many **Accounts**
 
 - **Post**
-
   - Belongs to one **User**
   - Has many **Comments**
 
@@ -323,10 +321,16 @@ SEED_ADMIN_PASS=secure_password
 SEED_ADMIN_ROLE=ADMIN
 ```
 
-### Run Prisma Migration
+### Run Database Migration
 
 ```bash
-npx prisma migrate deploy
+npx prisma migrate dev --name init
+```
+
+### Generate Prisma Client
+
+```bash
+npx prisma generate
 ```
 
 ### Seed Admin User
