@@ -14,10 +14,10 @@ type T_queryParamsReturn = {
 };
 
 const pagination_sorting_Helper = (
-  queryParams: T_queryParams
+  queryParams: T_queryParams,
 ): T_queryParamsReturn => {
   const page = Number(queryParams.page) || 1;
-  const limit = Number(queryParams.limit) || 10;
+  const limit = Number(queryParams.limit) || 5;
   const skip = (page - 1) * limit;
 
   const sortby = queryParams.sortby || "created_At";
