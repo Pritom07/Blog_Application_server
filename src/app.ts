@@ -10,11 +10,16 @@ import notFound from "./middleware/notfound";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(express.json());
 app.use(
   cors({
-    origin: config.APP_URL as string,
+    origin: [config.APP_URL as string, config.PROD_APP_URL as string],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"],
   }),
 );
 app.all("/api/auth/*splat", toNodeHandler(auth));

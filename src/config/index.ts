@@ -7,6 +7,7 @@ export const config = {
   port: process.env.PORT,
   BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   APP_URL: process.env.APP_URL,
+  PROD_APP_URL: process.env.PROD_APP_URL,
   APP_USER: process.env.APP_USER,
   APP_PASS: process.env.APP_PASS,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

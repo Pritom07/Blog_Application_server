@@ -19,8 +19,23 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
 
-  trustedOrigins: [config.APP_URL!, config.BETTER_AUTH_URL!],
-  advanced: { useSecureCookies: true },
+  trustedOrigins: [config.APP_URL!, config.PROD_APP_URL!],
+
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 6 * 60, // 6 minutes
+    },
+  },
+
+  advanced: {
+    cookiePrefix: "better-auth",
+    useSecureCookies: process.env.NODE_ENV === "production",
+    crossSubDomainCookies: {
+      enabled: false,
+    },
+    disableCSRFCheck: true, // Allow requests without Origin header (Postman, mobile apps, etc.)
+  },
 
   user: {
     additionalFields: {
