@@ -21,6 +21,19 @@ export const auth = betterAuth({
 
   trustedOrigins: [config.APP_URL!, config.PROD_APP_URL!],
 
+  cookies: {
+    sessionToken: {
+      name: "better-auth.session_token",
+      options: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // none for prod, lax for localhost
+        secure: process.env.NODE_ENV === "production", // true in prod, false in dev
+        path: "/",
+      },
+    },
+  },
+
+  ///?????? phero
   session: {
     cookieCache: {
       enabled: true,
@@ -28,13 +41,20 @@ export const auth = betterAuth({
     },
   },
 
+  //???????? programming hero
+  // advanced: {
+  //   cookiePrefix: "better-auth",
+  //   useSecureCookies: process.env.NODE_ENV === "production",
+  //   crossSubDomainCookies: {
+  //     enabled: false,
+  //   },
+  //   disableCSRFCheck: true, // Allow requests without Origin header (Postman, mobile apps, etc.)
+  // },
+
   advanced: {
     cookiePrefix: "better-auth",
     useSecureCookies: process.env.NODE_ENV === "production",
-    crossSubDomainCookies: {
-      enabled: false,
-    },
-    disableCSRFCheck: true, // Allow requests without Origin header (Postman, mobile apps, etc.)
+    disableCSRFCheck: true, // optional, useful for Postman or testing
   },
 
   user: {
