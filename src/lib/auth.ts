@@ -21,6 +21,21 @@ export const auth = betterAuth({
 
   trustedOrigins: [config.APP_URL!, config.PROD_APP_URL!],
 
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-better-auth.session_token"
+          : "better-auth.session_token",
+      options: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+      },
+    },
+  },
+
   session: {
     cookieCache: {
       enabled: true,
