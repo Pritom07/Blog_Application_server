@@ -10,12 +10,32 @@ import notFound from "./middleware/notfound";
 
 const app = express();
 
-app.set("trust proxy", 1);
+const allowedOrigins = [
+  config.APP_URL || "http://localhost:3000",
+  config.PROD_APP_URL, // Production frontend URL
+  "http://localhost:3000",
+  "http://localhost:5000",
+].filter(Boolean); // Remove undefined values
 
 app.use(express.json());
 app.use(
   cors({
-    origin: [config.APP_URL as string, config.PROD_APP_URL as string],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+
+      // Check if origin is in allowedOrigins or matches Vercel preview pattern
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        /^https:\/\/Blog_Application_client.*\.vercel\.app$/.test(origin) ||
+        /^https:\/\/.*\.vercel\.app$/.test(origin); // Any Vercel deployment
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],

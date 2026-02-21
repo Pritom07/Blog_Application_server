@@ -19,22 +19,30 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
 
-  trustedOrigins: [config.APP_URL!, config.PROD_APP_URL!],
+  trustedOrigins: async (request) => {
+    const origin = request?.headers.get("origin");
 
-  cookies: {
-    sessionToken: {
-      name:
-        process.env.NODE_ENV === "production"
-          ? "__Secure-better-auth.session_token"
-          : "better-auth.session_token",
-      options: {
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-      },
-    },
+    const allowedOrigins = [
+      config.APP_URL,
+      config.PROD_APP_URL,
+      config.BETTER_AUTH_URL,
+      "http://localhost:3000",
+      "http://localhost:5000",
+    ].filter(Boolean);
+
+    // Check if origin matches allowed origins or Vercel pattern
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/.*\.vercel\.app$/.test(origin)
+    ) {
+      return [origin as string];
+    }
+
+    return [];
   },
+
+  basePath: "/api/auth",
 
   session: {
     cookieCache: {
@@ -82,14 +90,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       try {
-        // const verificationUrl = `${config.APP_URL}/verify-email?token=${token}`;
-        const baseUrl =
-          process.env.NODE_ENV === "production"
-            ? config.PROD_APP_URL
-            : config.APP_URL;
-
-        const verificationUrl = `${baseUrl}/verify-email?token=${token}`;
-
+        const verificationUrl = `${config.APP_URL}/verify-email?token=${token}`;
         const info = await transporter.sendMail({
           from: `"Blog App"<${config.APP_USER}>`,
           to: user.email,
