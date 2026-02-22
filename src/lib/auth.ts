@@ -44,7 +44,7 @@ export const auth = betterAuth({
 
   basePath: "/api/auth",
 
-  //? for "login but not see dashboard" problem solve
+  //? for "login but not see dashboard" problem solve, in case fornt and backend deployed in vercel
   cookies: {
     sessionToken: {
       name: "better-auth.session_token",
@@ -53,6 +53,7 @@ export const auth = betterAuth({
         sameSite: "none",
         secure: process.env.NODE_ENV === "production",
         path: "/",
+        domain: ".vercel.app",
       },
     },
   },
