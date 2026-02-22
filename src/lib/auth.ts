@@ -104,12 +104,10 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       try {
-        // const verificationUrl = `${config.APP_URL}/api/auth/verify-email?token=${token}`;
         const frontendUrl =
           process.env.NODE_ENV === "production"
             ? config.PROD_APP_URL
             : config.APP_URL;
-
         const verificationUrl = `${frontendUrl}/api/auth/verify-email?token=${token}`;
         const info = await transporter.sendMail({
           from: `"Blog App"<${config.APP_USER}>`,
