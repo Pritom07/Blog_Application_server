@@ -104,6 +104,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       try {
+        // Always frontendUrl is APP_URL=https://localhost:3000 and it is not working yet
         const frontendUrl =
           process.env.NODE_ENV === "production"
             ? config.PROD_APP_URL
